@@ -14,7 +14,7 @@ define([
 
   Results.prototype.render = function () {
     var $results = $(
-      '<ul class="select2-results__options" role="listbox"></ul>'
+      '<ul class="select2-results__options" role="listbox" tabindex="-1"></ul>'
     );
 
     if (this.options.get('multiple')) {
@@ -174,7 +174,8 @@ define([
     option.classList.add('select2-results__option--selectable');
 
     var attrs = {
-      'role': 'option'
+      'role': 'option',
+      'tabindex': '-1'
     };
 
     var matches = window.Element.prototype.matches ||
@@ -235,11 +236,12 @@ define([
 
       var $childrenContainer = $('<ul></ul>', {
         'class': 'select2-results__options select2-results__options--nested',
-        'role': 'none'
+        'role': 'listbox'
       });
 
       $childrenContainer.append($children);
 
+      $option.attr('role', 'list');
       $option.append(label);
       $option.append($childrenContainer);
     } else {
@@ -417,6 +419,7 @@ define([
     container.on('results:focus', function (params) {
       params.element[0].classList.add('select2-results__option--highlighted');
       params.element[0].setAttribute('aria-selected', 'true');
+      self.$results.attr('aria-activedescendant', params.element.attr('id'));
     });
 
     container.on('results:message', function (params) {

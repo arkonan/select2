@@ -14,7 +14,7 @@ define([
 
   BaseSelection.prototype.render = function () {
     var $selection = $(
-      '<span class="select2-selection" role="combobox" ' +
+      '<span class="select2-selection" ' +
       ' aria-haspopup="true" aria-expanded="false">' +
       '</span>'
     );
@@ -81,7 +81,11 @@ define([
       self.$selection.removeAttr('aria-activedescendant');
       self.$selection.removeAttr('aria-owns');
 
-      self.$selection.trigger('focus');
+      // This needs to be delayed as the active element is the body when the
+      // key is pressed.
+      window.setTimeout(function () {
+        self.$selection.trigger('focus');
+      }, 1);
 
       self._detachCloseHandler(container);
     });
@@ -132,6 +136,14 @@ define([
         var $element = Utils.GetData(this, 'element');
 
         $element.select2('close');
+
+        // Remove any focus when dropdown is closed by clicking outside the select area.
+        // Timeout of 1 required for close to finish wrapping up.
+        var $this = $(this);
+        setTimeout(function () {
+          $this.find('*:focus').blur();
+          $target.focus();
+        }, 1);
       });
     });
   };
